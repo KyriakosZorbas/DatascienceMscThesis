@@ -1,0 +1,8 @@
+version: '2.2'
+services:
+
+  plant-pathology-api:
+    container_name: plant-pathology-api
+    image: zorbaskyriakos/plant-pathology-api
+    ports:
+      - "7001:7001"

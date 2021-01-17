@@ -1,0 +1,30 @@
+FROM python:3.6
+
+RUN pip install torch==1.4
+RUN pip install torchvision==0.5.0
+RUN pip install pandas
+RUN pip install tensorflow==2.4.0
+RUN pip install Keras==2.4.3
+RUN pip install packaging==20.8
+RUN apt-get update -y
+RUN apt-get install nano -y
+RUN apt-get install zip -y
+RUN apt-get install curl -y
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash
+RUN apt-get install -y nodejs
+RUN node -v
+RUN npm -v
+RUN pip3 install opencv-python
+RUN apt-get install python-opencv -y
+
+
+COPY AI-PlantPathologyAPI /AI-PlantPathologyAPI
+WORKDIR "/AI-PlantPathologyAPI"
+RUN npm install
+COPY start.sh /start.sh
+
+WORKDIR "/"
+
+COPY AI-PlantPathologyModels /AI-PlantPathologyModels
+COPY Images /Images
+CMD tail -f /dev/null
