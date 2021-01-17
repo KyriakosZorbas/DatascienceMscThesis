@@ -1,0 +1,60 @@
+.disable-button-save{
+    opacity: 0.5;
+    background-color: #225765;
+    border-color: #225765;
+    pointer-events: none;
+}
+
+/* Modal Content */
+.custom-modal-content {
+    background-color: #fefefe;
+    text-align: center;
+    z-index: 1000000;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 250px;
+    height: 120px;
+    position: fixed;
+    left: 50%;
+    top: 15%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.allSidesRed
+{
+    box-shadow:  0 0 10px rgba(222, 20, 20, 5);
+    -moz-box-shadow: 0 0 10px rgba(222, 20, 20, 5);
+    -webkit-box-shadow: 0 0 10px  rgba(222, 20, 20, 5);
+    -o-box-shadow: 0 0 10px  rgba(222, 20, 20, 5);
+}
+.allSidesGreen
+{
+    box-shadow:  0 0 10px rgba(27, 222, 20, 5);
+    -moz-box-shadow: 0 0 10px rgba(27, 222, 20, 5);
+    -webkit-box-shadow: 0 0 10px  rgba(27, 222, 20, 5);
+    -o-box-shadow: 0 0 10px  rgba(27, 222, 20, 5);
+}
+
+.rdl-move-all{
+    display: none;
+}
