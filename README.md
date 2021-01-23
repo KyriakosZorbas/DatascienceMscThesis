@@ -17,6 +17,8 @@ $ python ApiCallPythonScript.py myImage.png
 ```
 As argument we can give the absolute path of our test Image , or just the name of the image if the script is in the same folder level with our script.
 
+These [images](https://github.com/KyriakosZorbas/DatascienceMscThesis/tree/main/test_images_for_API) can be used as test for the API.
+
 # Links
 
 Dataset link : https://drive.google.com/file/d/1MfIBwRgeT5sr_O_HfXpLsDQYn4EmxC-J/view?usp=sharing
