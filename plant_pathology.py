@@ -29,7 +29,7 @@ DIR_TEST = f'{DIR_INPUT}/test'
 # Loading the device now
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-
+global bboxes
 # HELPER FUNCTIONS FOR VIZUALISING / PREDICTING
 
 def get_boxes(tensor,index,score=0.5):
@@ -68,22 +68,19 @@ def load_test_dataset():
 def get_test_image(imageName,imageFullPath,imageCropListForSave,itr,score = 0.5):
     image, targets= next(itr)
     sample = image
-
     image = image.to(device)
     model.eval()
     outputs = model(image)
     outputs = [{k: v.to(device) for k, v in t.items()} for t in outputs]
     boxes = get_boxes(outputs,0,score)
 
-    #fig, ax = plt.subplots(1, 1, figsize=(16, 8))
-    #print(sample.shape)
     img = sample[0].permute(1,2,0).cpu().numpy()
-    #print(img.shape)
 
     img = np.array(img)
     img = np.reshape(img,(img.shape[1],img.shape[1]))
-    #print(img.shape)
     imageCropId = 0
+    global bboxes
+    bboxes = str(boxes)
     for box in boxes:
         x,y,w,h = box
         imageCropId = imageCropId + 1
@@ -92,17 +89,13 @@ def get_test_image(imageName,imageFullPath,imageCropListForSave,itr,score = 0.5)
 
         im=Image.open(imageFullPath)
         im=im.crop(box)
-        #print(box)
-
         imageCropName= imageCropListForSave+ str(imageCropId)+"_" + imageName
         im = im.save(imageCropName)
     #ax.set_axis_off()
     #ax.imshow(img,cmap='gray')
 
-
 model = torch.load("/AI-PlantPathologyModels/leaves_fasterrcnn_model.pth", map_location={'cuda:0': 'cpu'})
 model.to(device)
-#print("Model loaded")
 
 it = iter(load_test_dataset())
 imageCropListForSave = "/Images/croppedImages/"
@@ -111,24 +104,19 @@ for path in os.listdir(image_list):
     imageFullPath = os.path.join(image_list, path)
     if os.path.isfile(imageFullPath):
         imageName=imageFullPath.split("/")[-1]
-        #print(imageName)
-        #print (imageFullPath)
         try:
             get_test_image(imageName,imageFullPath,imageCropListForSave,it,0.5)
         except Exception as e:
+            print(e)
             print( '{ "totalLeafs":"'+str(0)+'", "healthy":"'+str(0)+'", "diseased":"'+str(0)+'", "healthyPercentage":"'+str(0)+'", "diseasedPercentage":"'+str(0)+'"}')
             sys.exit()
 ###############################################################################################3
 
 # load model
 new_model = load_model("/AI-PlantPathologyModels/bestmodel.hdf5")
-# summarize model.
-#new_model.summary()
 
 def imagePreprocess(imageFullPath):
   img=cv2.imread(imageFullPath)
-  #plt.imshow(img, cmap='gray')
-  #print('Original Dimensions : ',img.shape)
   width = 256
   height = 256
   dim = (width, height)
@@ -136,11 +124,7 @@ def imagePreprocess(imageFullPath):
   # resize image
   resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
-  #print('Resized Dimensions : ',resized.shape)
-  #cv2_imshow(resized)
-  #reshaping the image to make it compatible for the argument of predict function
   myImage=resized.reshape(-1,256,256,3)
-  #print('Reshaped Dimensions : ',myImage.shape)
   return myImage
 
 
@@ -197,8 +181,12 @@ if(totalLeafs > 0):
 
 #print(diseasedCounterPer)
 #print(healthyCounterPer)
+global bboxes
+bboxes = bboxes.replace("array", "")
+bboxes = bboxes.replace(", dtype=int32)", "")
+bboxes = bboxes.replace("(", "")
 
-results =  '{ "totalLeafs":"'+str(totalLeafs)+'", "healthy":"'+str(healthyCounter)+'", "diseased":"'+str(diseasedCounter)+'", "healthyPercentage":"'+str(healthyCounterPer)+'", "diseasedPercentage":"'+str(diseasedCounterPer)+'"}'
+results =  '{"bbox":'+str(bboxes)+' ,"totalLeafs":"'+str(totalLeafs)+'", "healthy":"'+str(healthyCounter)+'", "diseased":"'+str(diseasedCounter)+'", "healthyPercentage":"'+str(healthyCounterPer)+'", "diseasedPercentage":"'+str(diseasedCounterPer)+'"}'
 
 print(results)
 
@@ -212,5 +200,4 @@ for filename in os.listdir(folder):
             shutil.rmtree(file_path)
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
-
 
